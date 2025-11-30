@@ -19,21 +19,21 @@ Customers on flexible month-to-month contracts are significantly more likely to 
 The churn rate is highest among new customers (tenure < 12 months). Loyalty increases significantly after the first year.
 
 #### Finding 3: Fiber Optic Internet Users are High-Risk
-Despite being higher-value customers, those with Fiber Optic service showed a higher propensity to churn, indicating potential dissatisfaction with price or service quality in that specific segment.
+Despite likely being higher-value customers, those with Fiber Optic service showed a higher propensity to churn compared to DSL users, indicating potential dissatisfaction with price or service quality in that specific segment.
 
 ---
 
-## 3. Model Selection: Neural Network vs. Logistic Regression
-This project explores two modeling approaches to solve the business problem.
+## 3. Methodology & Model Performance
+To solve this problem, I applied **Logistic Regression** (Statistical Modeling) rather than a "black box" machine learning model. This choice was strategic: for business stakeholders, understanding *why* a customer is leaving (interpretability) is just as critical as predicting *if* they will leave.
 
-### Approach A: Neural Network (Deep Learning)
-* **Goal:** Maximize raw predictive accuracy.
-* **Result:** Achieved high accuracy but acted as a "black box," offering limited visibility into *which* specific features were driving the churn.
+### Key Modeling Steps:
+* **Data Preprocessing:** Handled categorical variables via One-Hot Encoding and scaled numerical features to ensuring accurate coefficient analysis.
+* **Handling Class Imbalance:** The dataset was imbalanced (only ~27% churners). I addressed this by utilizing **balanced class weights** during model training. This prioritizes **Recall** (capturing as many churners as possible) over simple raw accuracy.
 
-### Approach B: Logistic Regression (Statistical Modeling) — *Selected for Final Deployment*
-* **Goal:** Balance predictive power with **interpretability**.
-* **Why it was chosen:** For a business stakeholder, knowing *why* a customer is leaving is as important as knowing *if* they will leave. Logistic Regression provided coefficients that quantified the impact of specific features (e.g., Fiber Optic, Contract Type).
-* **Performance:** The model was tuned with `class_weights='balanced'` to prioritize **Recall** (capturing as many churners as possible) over raw accuracy. While overall accuracy settled at ~73-80%, the model successfully identifies the majority of at-risk customers, minimizing the "cost of missed opportunities."
+### Performance:
+* **Accuracy:** ~73-80%
+* **Business Value:** While a raw accuracy score might seem moderate, the model excels at identifying the *minority class* (churners). By sacrificing some precision to gain higher recall, we ensure the business doesn't miss the opportunity to save at-risk customers.
+* **Interpretability:** The model successfully quantified the impact of key features. We found that **Month-to-Month contracts** and **Fiber Optic service** were the strongest positive coefficients (increasing churn risk), while **Tenure** was the strongest negative coefficient (decreasing risk).
 
 ![Confusion Matrix](images/Confusion_matrix.png)
 
@@ -46,7 +46,7 @@ Based on the model's coefficients and probability scores, the following recommen
 1.  **Targeted Campaign for Contract Conversion:**
     * **Action:** Launch a campaign for month-to-month customers with 2–12 months of tenure.
     * **Offer:** A one-time "Loyalty Lock-in" discount (e.g., 15% off for 6 months) for switching to a 1-Year Contract.
-    * **Business Impact:** Neutralizes the #1 driver of churn identified by the model.
+    * **Business Impact:** Neutralizes the #1 driver of churn identified by the model coefficients.
 
 2.  **Enhanced Fiber Optic Onboarding:**
     * **Action:** Implement a proactive "Service Health Check" for new Fiber Optic customers within their first 60 days.
@@ -56,3 +56,7 @@ Based on the model's coefficients and probability scores, the following recommen
     * **Action:** Use the model to generate a weekly "At-Risk List" of customers with a churn probability > 70%.
     * **Business Impact:** Enables the retention team to make personalized offers *before* the customer calls to cancel.
 
+---
+    ```
+3.  Open and run the notebook:
+    * `Churn_Analysis_Report.ipynb` contains the full EDA, Feature Importance analysis, and Business Recommendations.
